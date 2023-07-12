@@ -1,0 +1,105 @@
+﻿
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js" integrity="sha512-3gJwYpMe3QewGELv8k/BX9vcqhryRdzRMxVfq6ngyWXwo03GFEzjsUm8Q7RZcHPHksttq7/GFoxjCVUjkjvPdw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+
+<div>
+    <div style="width: 60%">
+        <div>
+            <input id="nation" />
+            <input id="gender" />
+            <button onclick="Search()">Search</button>
+        </div>
+        <div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>id</th>
+                        <th>name</th>
+                        <th>gender</th>
+                        <th>dob</th>
+                        <th>desc</th>
+                        <th>nation</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="body">
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+
+    <div id="detail">
+
+    </div>
+</div>
+<script>
+    const Search = () => {
+        const nation = $("#nation").val();
+        const gender = $("#gender").val();
+        const body = $("#body");
+        $.ajax({
+            url: `http://localhost:5000/api/Director/GetDirectors/${nation}/${gender}`,
+            method: 'GET',
+            //data: JSON.stringify(data),
+            contentType: 'application/json',
+            success: function (response) {
+                var html = '';
+                response.forEach(item => {
+                    html += `
+                    <tr>
+                        <td>${item.id}</td>
+                        <td>${item.fullName}</td>
+                        <td>${item.gender}</td>
+                        <td>${item.dob}</td>
+                        <td>${item.description}</td>
+                        <td>${item.nationality}</td>
+                        <td><button onclick="detail(${item.id})">Detail</button></td>
+                    </tr>`
+                })
+                body.append(html);
+            },
+            error: function (xhr, status, error) {
+                console.log(error);
+            }
+        });
+    }
+
+    const detail = id => {
+        const detail = $("#detail");
+        //const detail = document.querySelector('#detail');
+        //const detail = document.getElementById('detail');
+
+        $.ajax({
+            url: `http://localhost:5000/api/Director/GetDirector/${id}`,
+            method: 'GET',
+            //data: JSON.stringify(data),
+            contentType: 'application/json',
+            success: function (response) {
+                console.log(detail)
+                detail[0].innerHTML = '';
+                var movieHtml = '';
+                response.movies.forEach(item => {
+                    movieHtml += `
+            <li>${item.producerName} - relase year: ${item.releaseYear}>
+`
+                })
+                const html = `
+                            <h1>List movi of ${response.fullName}</h1>
+                        <ul>
+                            ${movieHtml}
+                        </ul>
+                `;
+                detail.append(html);
+                console.log(detail)
+            },
+            error: function (xhr, status, error) {
+                console.log(error);
+            }
+        });
+    }
+</script>
+
+
