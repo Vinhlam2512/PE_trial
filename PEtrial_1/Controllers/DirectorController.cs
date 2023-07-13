@@ -1,10 +1,15 @@
 ﻿using System.IO;
 
+using AutoMapper;
+
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
+using PEtrial_1.DTOs;
 using PEtrial_1.Models;
+
+using static PEtrial_1.DTOs.DTO;
 
 namespace PEtrial_1.Controllers {
     [Route("api/[controller]/[action]")]
@@ -12,83 +17,50 @@ namespace PEtrial_1.Controllers {
     public class DirectorController : ControllerBase {
 
         private PE_PRN_Fall22B1Context db = new PE_PRN_Fall22B1Context();
+        private readonly IMapper mapper;
+
+        public DirectorController(IMapper mapper)
+        {
+            this.mapper = mapper;
+        }
 
         [HttpGet("{nationality}/{gender}")]
-        public dynamic GetDirectors(string nationality, string gender)
+        public IActionResult GetDirectors(string nationality, string gender)
         {
-            bool male = gender == "male" ? true : false;
-            var list = db.Directors.Where(x => x.Nationality == nationality && x.Male == male).Select(x =>
-            new {
-                id = x.Id,
-                fullName = x.FullName,
-                gender = x.Male ? "Male" : "Female",
-                dob = x.Dob,
-                dobString = x.Dob.ToString("M/d/yyyy"),
-                nationality = x.Nationality,
-                description = x.Description
-            }).ToList();
-            return list;
+            try
+            {
+                bool male = gender == "male" ? true : false;
+                List<Director> list = db.Directors.Where(x => x.Nationality == nationality && x.Male == male).ToList();
+                List<DirectorDTO> res = mapper.Map<List<DirectorDTO>>(list);
+                return Ok(res);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
 
         [HttpGet("{id}")]
-        public dynamic GetDirector(int id)
+        public DirectorDTO GetDirector(int id)
         {
-            var director = db.Directors.Include(x => x.Movies).Select(x =>
-            new {
-                id = x.Id,
-                fullName = x.FullName,
-                gender = x.Male ? "Male" : "Female",
-                dob = x.Dob,
-                dobString = x.Dob.ToString("M/d/yyyy"),
-                nationality = x.Nationality,
-                description = x.Description,
-                movies = x.Movies.Select(x => new
-                {
-                    id = x.Id,
-                    title = x.Title,
-                    releaseDate = x.ReleaseDate,
-                    description = x.Description,
-                    language = x.Language,
-                    producerId = x.ProducerId,
-                    directorId = x.DirectorId,
-                    genres = x.Genres,
-                    stars = x.Stars,
-                    releaseYear = x.ReleaseDate.GetValueOrDefault().Year,
-                    producerName = x.Producer.Name,
-                    directorName = x.Director.FullName,
-                })
-            }).FirstOrDefault(x => x.id == id);
+            Director? director = db.Directors.Include(x => x.Movies).ThenInclude(x => x.Producer).FirstOrDefault(x => x.Id == id);
+            DirectorDTO directorDTO = mapper.Map<DirectorDTO>(director);
             if(director == null)
             {
                 return null;
             }
-            return director;
+            return directorDTO;
         }
 
-        public class DirectorDTO
-        {
-            public string fullName { get; set; }
-            public bool male { get; set; }
-            public string dob { get; set; }
-            public string nationality { get; set; }
-            public string description { get; set; }
-        }
+
 
         [HttpPost]
-        public IActionResult Create(DirectorDTO director)
+        public IActionResult Create(CreateDirectorDto director)
         {
             try
             {
-                Director d = new Director()
-                {
-                    Id = 7,
-                    FullName = director.fullName,
-                    Male = director.male,
-                    Dob = Convert.ToDateTime(director.dob),
-                    Nationality = director.nationality,
-                    Description = director.description,
-                };
+                Director d = mapper.Map<Director>(director);
                 db.Directors.Add(d);
                 db.SaveChanges();
                 return Ok(1);
