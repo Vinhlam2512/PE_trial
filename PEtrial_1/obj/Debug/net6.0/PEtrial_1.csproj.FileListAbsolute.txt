@@ -60,3 +60,9 @@ C:\Users\VINH\Desktop\PE\PEtrial_1\obj\Debug\net6.0\PEtrial_1.genruntimeconfig.c
 C:\Users\VINH\Desktop\PE\PEtrial_1\obj\Debug\net6.0\ref\PEtrial_1.dll
 C:\Users\VINH\Desktop\PE\PEtrial_1\bin\Debug\net6.0\AutoMapper.dll
 C:\Users\VINH\Desktop\PE\PEtrial_1\bin\Debug\net6.0\AutoMapper.Extensions.Microsoft.DependencyInjection.dll
+C:\Users\VINH\Desktop\PE\PEtrial_1\bin\Debug\net6.0\Microsoft.AspNetCore.OData.dll
+C:\Users\VINH\Desktop\PE\PEtrial_1\bin\Debug\net6.0\Microsoft.Bcl.AsyncInterfaces.dll
+C:\Users\VINH\Desktop\PE\PEtrial_1\bin\Debug\net6.0\Microsoft.OData.Core.dll
+C:\Users\VINH\Desktop\PE\PEtrial_1\bin\Debug\net6.0\Microsoft.OData.Edm.dll
+C:\Users\VINH\Desktop\PE\PEtrial_1\bin\Debug\net6.0\Microsoft.OData.ModelBuilder.dll
+C:\Users\VINH\Desktop\PE\PEtrial_1\bin\Debug\net6.0\Microsoft.Spatial.dll

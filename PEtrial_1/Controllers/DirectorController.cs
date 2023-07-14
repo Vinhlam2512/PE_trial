@@ -4,6 +4,7 @@ using AutoMapper;
 
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OData.Query;
 using Microsoft.EntityFrameworkCore;
 
 using PEtrial_1.DTOs;
@@ -51,6 +52,19 @@ namespace PEtrial_1.Controllers {
                 return null;
             }
             return directorDTO;
+        }
+
+        [EnableQuery]
+        [HttpGet]
+        public IActionResult GetAllDirector()
+        {
+            List<Director> director = db.Directors.Include(x => x.Movies).ThenInclude(x => x.Producer).ToList();
+            List<DirectorDTO> directorDTO = mapper.Map<List<DirectorDTO>>(director);
+            if (director == null)
+            {
+                return null;
+            }
+            return Ok(directorDTO);
         }
 
 

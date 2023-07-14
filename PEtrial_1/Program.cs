@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 using PEtrial_1;
 using PEtrial_1.Models;
+using Microsoft.AspNetCore.OData;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,7 +20,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<PE_PRN_Fall22B1Context>(options => options.UseSqlServer(
         builder.Configuration.GetConnectionString("DefaultConnection")
 ));
-
+builder.Services.AddControllers().AddOData(op => op.Select().Expand().Filter().Count().OrderBy().SetMaxTop(100));
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(builder =>

@@ -1,0 +1,91 @@
+﻿
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js" integrity="sha512-3gJwYpMe3QewGELv8k/BX9vcqhryRdzRMxVfq6ngyWXwo03GFEzjsUm8Q7RZcHPHksttq7/GFoxjCVUjkjvPdw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+
+<div>
+    <div>
+        <div>
+            <input id="nation" />
+            <input id="gender" />
+            <button onclick="Search()">Search</button>
+        </div>
+        <div id="message">adadsadss</div>
+        <div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>OrderID</th>
+                        <th>CusID</th>
+                        <th>Name</th>
+                        <th>EmpID</th>
+                        <th>EmpName</th>
+                        <th>EmpDepartmentName</th>
+                        <th>OrderDate</th>
+                        <th>Freight</th>
+                    </tr>
+                </thead>
+                <tbody id="body">
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+   
+</div>
+<script>
+
+    const LoadAll = () => {
+        const body = $("#body");
+        $.ajax({
+            url: `http://localhost:5000/api/Order/GetAllOrder`,
+            method: 'GET',
+            //data: JSON.stringify(data),
+            contentType: 'application/json',
+            success: function (response) {
+                body[0].innerHTML = '';
+                var html = '';
+                response.forEach(item => {
+                    html += `
+                    <tr>
+                        <td>${item.orderId}</td>
+                        <td>${item.customerId}</td>
+                        <td>${item.customerName} <button onclick="deleteCus('${item.customerId}')">delete</button></td>
+                        <td>${item.employeeId}</td>
+                        <td>${item.employeeName}</td>
+                        <td>${item.employeeDepartmentName}</td>
+                        <td>${item.orderDate}</td>
+                        <td>${item.freight}</td>
+                    </tr>`
+                })
+                body[0].innerHTML += html;
+            },
+            error: function (xhr, status, error) {
+                console.log(error);
+            }
+        });
+    }
+    LoadAll();
+
+    const deleteCus = (id) => {
+        const message = $("#message");
+        $.ajax({
+            url: `http://localhost:5000/api/Customer/Delete/${id}`,
+            method: 'POST',
+            //data: JSON.stringify(data),
+            contentType: 'application/json',
+            success: function (response) {
+                var html = `${response.countDeletedCustomer} - ${response.countDeletedOrder} - ${response.countDeletedOrderDetail}`;
+                message[0].textContent = html;
+                LoadAll();
+            },
+            error: function (xhr, status, error) {
+                console.log(error);
+            }
+        });
+    }
+
+    
+</script>
+

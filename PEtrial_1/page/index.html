@@ -73,7 +73,7 @@
         //const detail = document.getElementById('detail');
 
         $.ajax({
-            url: `http://localhost:5000/api/Director/GetDirector/${id}`,
+            url: `http://localhost:5000/api/Director/GetAllDirector?$filter=Id eq ${id}`,
             method: 'GET',
             //data: JSON.stringify(data),
             contentType: 'application/json',
@@ -81,13 +81,13 @@
                 console.log(detail)
                 detail[0].innerHTML = '';
                 var movieHtml = '';
-                response.movies.forEach(item => {
+                response[0].movies.forEach(item => {
                     movieHtml += `
             <li>${item.producerName} - relase year: ${item.releaseYear}>
 `
                 })
                 const html = `
-                            <h1>List movi of ${response.fullName}</h1>
+                            <h1>List movi of ${response[0].fullName}</h1>
                         <ul>
                             ${movieHtml}
                         </ul>
